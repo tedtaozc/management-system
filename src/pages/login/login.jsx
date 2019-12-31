@@ -1,20 +1,37 @@
 import React, {Component} from "react";
+import { Form, Icon, Input, Button ,message} from 'antd';
+
+import {reqLogin} from "../../api";
 
 import logo from './images/logo.png';
 
 import './login.less';
 
-import { Form, Icon, Input, Button } from 'antd';
+
+
 
 class Login extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(async (err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
+
+                const result = await reqLogin(values.username, values.password);
+
+                if (result.status === 0) {
+                    message.success("successfully log in");
+
+                    this.props.history.replace('/');
+
+                } else {
+                    message.error(result.msg);
+                }
             }
         });
+
+
     };
 
     validatePassword = (rule, value, callback) => {
