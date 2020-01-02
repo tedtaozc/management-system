@@ -1,9 +1,11 @@
 import React, {Component} from "react";
 import { Form, Icon, Input, Button ,message} from 'antd';
+import {Redirect} from 'react-router-dom';
 
 import {reqLogin} from "../../api";
+import storageUtils from "../../utils/storageUtils";
 
-import logo from './images/logo.png';
+import logo from "../../assets/logo.png";
 
 import './login.less';
 
@@ -23,7 +25,11 @@ class Login extends Component {
                 if (result.status === 0) {
                     message.success("successfully log in");
 
+                    const user = result.data;
+                    storageUtils.setUser(user);
+
                     this.props.history.replace('/');
+
 
                 } else {
                     message.error(result.msg);
@@ -48,6 +54,10 @@ class Login extends Component {
     }
 
     render() {
+        const user = storageUtils.getUser();
+        if (user !== null || user.id !== null) {
+            return <Redirect to="/" />;
+        }
         const { getFieldDecorator } = this.props.form;
         return (
             <div className="login">
